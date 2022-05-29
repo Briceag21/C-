@@ -1,0 +1,115 @@
+﻿
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+using System.Data;
+using WindowsFormsApp2.Models;
+
+namespace WindowsFormsApp2.Conectare
+{
+   
+
+
+    public class Conectare
+    { //fields
+        protected string stringConnection;
+
+      
+
+        public Conectare(string stringConnection)
+        {
+            this.stringConnection = stringConnection;
+
+        }
+
+        //metodele
+        //toate cursele 
+        public IEnumerable<CursaModel> GetAll()
+        {
+            var cursaList = new List<CursaModel>();
+
+
+            using (var connection = new SqlConnection(stringConnection))
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = "SELECT * FROM Cursa ";
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+        //private int idGara1;
+        //private int idGara2;
+        //private int pret;
+        //private int idOrar;
+        //private int comfort;
+        //private String stare;
+        var cursaModel = new CursaModel();
+                        cursaModel.Id = (int)reader[0];
+                        cursaModel.IdGara1 = (int)reader[0];
+                        cursaModel.IdGara2 = (int)reader[0];
+                        cursaModel.Pret = (int)reader[0];
+                        cursaModel.IdOrar = (int)reader[0];
+                        cursaModel.Comfort = (int)reader[0];
+                        cursaModel.IDTren = (int)reader[0];
+                        cursaModel.Stare = reader[1].ToString();
+                        cursaList.Add(cursaModel);
+                    }
+                }
+                connection.Close();
+            }
+
+            return cursaList;
+        }
+
+        public void Add(CursaModel cursaModel)
+        {
+            using (var connection = new SqlConnection(stringConnection))
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                //private int idGara1;
+                //private int idGara2;
+                //private int pret;
+                //private int idOrar;
+                //private int comfort;
+                //private String stare;
+                command.CommandText = "INSERT INTO Cursa VALUES (@IdGara1,@IdGara2,@Pret,@IdOrar,@Comfort,@Stare)";
+               // command.Parameters.Add("@IdCursa", SqlDbType.int).Value = cursaModel.Id;
+                command.Parameters.Add("@IdGara1", SqlDbType.Int).Value = cursaModel.IdGara1;
+                command.Parameters.Add("@IdGara2", SqlDbType.Int).Value = cursaModel.IdGara1;
+                command.Parameters.Add("@Pret", SqlDbType.Int).Value = cursaModel.Pret;
+                command.Parameters.Add("@IdOrar", SqlDbType.Int).Value = cursaModel.IdOrar;
+                command.Parameters.Add("@Comfort", SqlDbType.Int).Value = cursaModel.Comfort;
+                command.Parameters.Add("@IDTren", SqlDbType.Int).Value = cursaModel.IDTren;
+                command.Parameters.Add("@Stare", SqlDbType.Char).Value = cursaModel.Stare;
+                command.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+        }
+
+        public void Delete(int id)
+        {
+            using (var connection = new SqlConnection(stringConnection))
+            using (var command = new SqlCommand())
+            {
+                connection.Open();
+                command.Connection = connection;
+                command.CommandText = "delete from Cursa where idCursa=@IdCursa";
+                command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+                command.ExecuteNonQuery();
+
+                connection.Close();
+            }
+        }
+    }
+}
